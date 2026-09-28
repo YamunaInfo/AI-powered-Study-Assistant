@@ -16,7 +16,7 @@ A web app for uploading study notes and generating summaries, keywords, practice
 
 - Frontend: HTML, CSS, and JavaScript.
 - Backend: Python and Flask.
-- Database: MySQL is supported through `DATABASE_URL`.
+- Database: SQLite by default; MySQL is supported through `DATABASE_URL`.
 - Text processing: NLTK.
 - Optional local models: Transformers BART and Sentence Transformers MiniLM.
 - Speech: gTTS, which requires internet access and sends narration text to Google's service.
@@ -74,7 +74,23 @@ $env:PYTHONPATH = "$PWD;$PWD\backend"
 python -m unittest discover -s backend\tests -v
 ```
 
+## Deploy to Render
+
+1. Push the repository to GitHub.
+2. In Render, select **New > Blueprint** and connect the repository. Render reads the root-level `render.yaml`.
+3. Add a valid `GEMINI_API_KEY` in the Render environment settings when prompted. The blueprint generates `SECRET_KEY` and disables local model downloads.
+4. After deployment, open the service URL Render assigns and verify `/health` returns `{"status":"ok","backend":"running"}`.
+
+The Render service serves the frontend and API from the same origin. The browser therefore uses the deployed API rather than `localhost`.
+
+SQLite is suitable for local development and demos. Data on a free web service may be lost when its filesystem is reset. For persistent production data, configure a MySQL database and set `DATABASE_URL`, for example `mysql://USER:PASSWORD@HOST:3306/study_assistant`. URL-encode special characters in the username or password.
+
+The Dockerfile can be built from the repository root with:
+
+```powershell
+docker build -f backend/Dockerfile -t study-assistant .
+```
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE).
-

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: ai-study-assistant
+    env: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend --bind 0.0.0.0:$PORT app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: AI_PROVIDER
+        value: gemini
+      - key: ENABLE_LOCAL_MODELS
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GEMINI_API_KEY
+        sync: false
